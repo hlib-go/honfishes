@@ -69,6 +69,7 @@ type OrderQueryV2Result struct {
 	Sign      string
 	Data      *OrderQueryV2ResultData
 }
+
 type OrderQueryV2ResultData struct {
 	OrderID        int64
 	MOrderID       string

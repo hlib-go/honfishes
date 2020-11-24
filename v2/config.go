@@ -14,6 +14,6 @@ type Config struct {
 	BaseServiceUrl string
 	AppKey         string
 	AppSecret      string
-	RsaPriKey      string // 证书私钥，用于解密
-	RsaPubKey      string // 证书公钥，提供给娱尚加密卡密
+	RsaPriKey      string // 证书私钥，用于解密， base64格式
+	RsaPubKey      string // 证书公钥，提供给娱尚加密卡密，base64格式
 }

@@ -25,8 +25,8 @@ func (c *Client) OrderCallback(req *http.Request) (r *OrderCallbackResult, err e
 		BuyCount:      req.FormValue("BuyCount"),
 		ExtendParam:   req.FormValue("ExtendParam"),
 	}
-	VerifySign := Md5Sign(c.Cfg.AppKey + r.TimesTamp + r.OrderID + r.MOrderID + strconv.FormatInt(int64(r.State), 10) + c.Cfg.AppSecret)
-	if r.Sign != VerifySign {
+	verifySign := Md5Sign(c.Cfg.AppKey + r.TimesTamp + r.OrderID + r.MOrderID + strconv.FormatInt(int64(r.State), 10) + c.Cfg.AppSecret)
+	if r.Sign != verifySign {
 		err = ERR_SIGN
 		return
 	}

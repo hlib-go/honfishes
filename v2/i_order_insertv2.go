@@ -41,6 +41,7 @@ type OrderInsertV2Params struct {
 }
 
 type OrderInsertV2ParamsExtendParam struct {
+	ExtendAccount string `json:"extendAccount,omitempty"` // 扩展账号用于传入除充值账号account外的其他账号，例如加油卡充值时的持卡人手机号码
 }
 
 type OrderInsertV2Result struct {

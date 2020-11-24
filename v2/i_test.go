@@ -13,9 +13,6 @@ var cfg = &Config{
 	RsaPubKey:      `MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDhFEQkoZcPJn69MbwelKRSvOla9i8xJIOmDDaURLxmJoUm4BCBNCgph+4CLyq+gGM3O/JzeyKK1vA7rLqTyKz0gaxyNm939J3xRqwIfOJivJHXPVHHjZyJaeHGlliwrG4JcYiSnEKc/wdxWx2fcTm6FGk9W7QcsdZLvuEYuWTAiwIDAQAB`,
 }
 
-// 测试用的产品
-var prodCode = "PLM100068"
-
 var c = NewClient(cfg)
 
 func TestGetAccount(t *testing.T) {
