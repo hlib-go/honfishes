@@ -1,14 +1,13 @@
 package v2
 
 import (
-	"errors"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
 )
 
-//3.4订单查询接口   http://*:*/Order/QueryV2（请从供货商处获取）
-
+// OrderQueryV2 3.4订单查询接口   http://*:*/Order/QueryV2（请从供货商处获取）
 func (c *Client) OrderQueryV2(mOrderId string) (result *OrderQueryV2Result, err error) {
 	timestamp := Timestamp()
 	sign := Md5Sign(c.Cfg.AppKey + timestamp + mOrderId + c.Cfg.AppSecret)
@@ -17,28 +16,49 @@ func (c *Client) OrderQueryV2(mOrderId string) (result *OrderQueryV2Result, err 
 	if err != nil {
 		return
 	}
-	if result.Code != 999 {
-		err = errors.New(strconv.FormatInt(result.Code, 10) + "->" + result.Msg)
+	if result.Code != ERR_SUCCESS.Code {
+		err = Err(result.Code, result.Msg)
 		return
 	}
 	if result.Sign != Md5Sign(c.Cfg.AppKey+strconv.FormatInt(result.TimesTamp, 10)+strconv.FormatInt(result.Code, 10)+strconv.FormatInt(int64(result.Data.OrderState), 10)+c.Cfg.AppSecret) {
-		err = RES_SIGN_ERROR
+		err = ERR_SIGN
 		return
 	}
-
-	if result != nil && result.Data != nil && result.Data.ExtendParam != nil {
-		if result.Data.ExtendParam.ChannelSerialNumber != "" {
-			result.Data.ExtendParam.ChannelSerialNumber = strings.TrimSpace(RsaDecrypt(result.Data.ExtendParam.ChannelSerialNumber, c.Cfg.RsaPriKey))
-		}
-		if result.Data.ExtendParam.CardPwd != "" {
-			result.Data.ExtendParam.CardPwd = strings.TrimSpace(RsaDecrypt(result.Data.ExtendParam.CardPwd, c.Cfg.RsaPriKey))
-		}
-		if result.Data.ExtendParam.CardNumber != "" {
-			result.Data.ExtendParam.CardNumber = strings.TrimSpace(RsaDecrypt(result.Data.ExtendParam.CardNumber, c.Cfg.RsaPriKey))
-		}
+	err = extendParamRsaDecrypt(result, c.Cfg.RsaPriKey)
+	if err != nil {
+		log.WithField("orderId", mOrderId).Error(err.Error())
+		err = ERR_RS_DECRYPTY
+		return
 	}
+	return
+}
 
-	// 通过判断订单状态做相应处理
+// 卡密提取订单时解密卡密
+func extendParamRsaDecrypt(result *OrderQueryV2Result, priKey string) (err error) {
+	if result == nil || result.Data == nil || result.Data.ExtendParam == nil {
+		return
+	}
+	if result.Data.ExtendParam.ChannelSerialNumber != "" {
+		v, err := RsaDecrypt(result.Data.ExtendParam.ChannelSerialNumber, priKey)
+		if err != nil {
+			return err
+		}
+		result.Data.ExtendParam.ChannelSerialNumber = strings.TrimSpace(v)
+	}
+	if result.Data.ExtendParam.CardPwd != "" {
+		v, err := RsaDecrypt(result.Data.ExtendParam.CardPwd, priKey)
+		if err != nil {
+			return err
+		}
+		result.Data.ExtendParam.CardPwd = strings.TrimSpace(v)
+	}
+	if result.Data.ExtendParam.CardNumber != "" {
+		v, err := RsaDecrypt(result.Data.ExtendParam.CardNumber, priKey)
+		if err != nil {
+			return err
+		}
+		result.Data.ExtendParam.CardNumber = strings.TrimSpace(v)
+	}
 	return
 }
 

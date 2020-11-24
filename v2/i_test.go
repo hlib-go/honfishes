@@ -80,6 +80,9 @@ func TestOrderInsertSiberianNitrariaFruitV2(t *testing.T) {
 
 func TestDecode(t *testing.T) {
 	text := "lVnMSzfi1+gsawtb6zrWmOImWdAkpgEJ00Qsx0x/GVvT5yR6Wr4aQameWfw0bGhjcTJ7xg0tVLT/yz9ZnYyCSrAmWwa71gO+cBTj7ZyD0mmrUBNLc4vh/pN+biRHiYuoevKI+E0yZLv6KY1/uIVZWy0WVVJyb66Wx3pKzPtr2xY="
-	val := RsaDecrypt(text, cfg.RsaPriKey)
+	val, err := RsaDecrypt(text, cfg.RsaPriKey)
+	if err != nil {
+		t.Error(err)
+	}
 	t.Log(val)
 }

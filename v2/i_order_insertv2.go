@@ -2,7 +2,6 @@ package v2
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strconv"
 )
@@ -19,12 +18,12 @@ func (c *Client) OrderInsertV2(p *OrderInsertV2Params) (result *OrderInsertV2Res
 	if err != nil {
 		return
 	}
-	if result.Code != 999 {
-		err = errors.New("YS" + strconv.FormatInt(result.Code, 10) + "->" + result.Msg)
+	if result.Code != ERR_SUCCESS.Code {
+		err = Err(result.Code, result.Msg)
 		return
 	}
 	if result.Sign != Md5Sign(c.Cfg.AppKey+strconv.FormatInt(result.TimesTamp, 10)+strconv.FormatInt(result.Code, 10)+result.OrderID+c.Cfg.AppSecret) {
-		err = RES_SIGN_ERROR
+		err = ERR_SIGN
 		return
 	}
 	return

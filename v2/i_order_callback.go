@@ -27,7 +27,7 @@ func (c *Client) OrderCallback(req *http.Request) (r *OrderCallbackResult, err e
 	}
 	VerifySign := Md5Sign(c.Cfg.AppKey + r.TimesTamp + r.OrderID + r.MOrderID + strconv.FormatInt(int64(r.State), 10) + c.Cfg.AppSecret)
 	if r.Sign != VerifySign {
-		err = RES_SIGN_ERROR
+		err = ERR_SIGN
 		return
 	}
 	return

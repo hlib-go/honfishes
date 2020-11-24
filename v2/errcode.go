@@ -1,7 +1,27 @@
 package v2
 
-import "errors"
+import (
+	"strconv"
+)
 
 var (
-	RES_SIGN_ERROR = errors.New("RES_SIGN_ERROR:YS响应数据签名校验错误")
+	ERR_SUCCESS     = Err(999, "success")
+	ERR_SIGN        = Err(1001, "响应数据验签失败")
+	ERR_RS_DECRYPTY = Err(1002, "卡密解密出错")
 )
+
+type ErrCode struct {
+	Code int64
+	Msg  string
+}
+
+func (e *ErrCode) Error() string {
+	return strconv.FormatInt(e.Code, 10) + ":" + e.Msg
+}
+
+func Err(code int64, msg string) *ErrCode {
+	return &ErrCode{
+		Code: code,
+		Msg:  msg,
+	}
+}

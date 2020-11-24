@@ -1,7 +1,6 @@
 package v2
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 )
@@ -13,18 +12,19 @@ func (c *Client) OrderInsertSiberianNitrariaFruitV2(p *OrderInsertSiberianNitrar
 	extendParam := fmt.Sprintf("{\"MemberPublicKey\":\"%s\"}", c.Cfg.RsaPubKey)
 	sign := Md5Sign(c.Cfg.AppKey + strconv.FormatInt(p.BuyCount, 10) + p.CallBackUrl + p.MOrderID + p.ProductCode + timestamp + c.Cfg.AppSecret)
 	err = c.Request("/Order/InsertSiberianNitrariaFruitV2",
-		fmt.Sprintf("CallBackUrl=%s&ChargeAccount=%s&CustomerIP=%s&MemberAmountCode=%s&AppKey=%s&Sign=%s&MOrderID=%s&TimesTamp=%s&BuyCount=%s&ProductCode=%s&ExtendParam=%s&Attach=",
+		fmt.Sprintf(
+			"CallBackUrl=%s&ChargeAccount=%s&CustomerIP=%s&MemberAmountCode=%s&AppKey=%s&Sign=%s&MOrderID=%s&TimesTamp=%s&BuyCount=%s&ProductCode=%s&ExtendParam=%s&Attach=",
 			p.CallBackUrl, p.ChargeAccount, CustomerIP, p.MemberAmountCode, c.Cfg.AppKey, sign, p.MOrderID, timestamp, strconv.FormatInt(p.BuyCount, 10), p.ProductCode, extendParam),
 		&result)
 	if err != nil {
 		return
 	}
-	if result.Code != 999 {
-		err = errors.New(strconv.FormatInt(result.Code, 10) + "->" + result.Msg)
+	if result.Code != ERR_SUCCESS.Code {
+		err = Err(result.Code, result.Msg)
 		return
 	}
 	if result.Sign != Md5Sign(c.Cfg.AppKey+strconv.FormatInt(result.TimesTamp, 10)+strconv.FormatInt(result.Code, 10)+result.OrderID+c.Cfg.AppSecret) {
-		err = RES_SIGN_ERROR
+		err = ERR_SIGN
 		return
 	}
 	return

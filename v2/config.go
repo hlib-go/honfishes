@@ -10,9 +10,6 @@ ProductCode（产品编号）
 
 */
 
-// 码商SDK约定名称，不能修改
-const NAME = "onfishes"
-
 type Config struct {
 	BaseServiceUrl string
 	AppKey         string
