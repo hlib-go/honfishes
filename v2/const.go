@@ -1,8 +1,5 @@
 package v2
 
-// SDK名称
-const NAME = "onfishes"
-
 /*
 1	订单正在处理中	等待并且继续查询（不能做成功和失败处理）
 2	订单成功	做成功处理
