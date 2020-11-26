@@ -1,8 +1,6 @@
 package v2
 
-import (
-	"strconv"
-)
+import "strconv"
 
 var (
 	ERR_SUCCESS     = Err(999, "success")
@@ -16,7 +14,7 @@ type ErrCode struct {
 }
 
 func (e *ErrCode) Error() string {
-	return strconv.FormatInt(e.Code, 10) + ":" + e.Msg
+	return e.Msg + ".[CHYS" + strconv.FormatInt(e.Code, 10) + "]"
 }
 
 func Err(code int64, msg string) *ErrCode {
