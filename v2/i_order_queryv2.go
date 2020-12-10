@@ -73,7 +73,7 @@ type OrderQueryV2Result struct {
 type OrderQueryV2ResultData struct {
 	OrderID        int64
 	MOrderID       string
-	OrderState     OrderStatus
+	OrderState     int64
 	ChargeAccount  string
 	BuyCount       int64
 	Price          int64
